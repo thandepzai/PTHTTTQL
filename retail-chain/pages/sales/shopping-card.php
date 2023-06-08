@@ -49,6 +49,7 @@ if (isset($_SESSION['id'])) {
   </head>
   <body class="g-sidenav-show bg-gray-100">
     <div class="card min-vh-100 bg-gradient-secondary container-fluid py-4">
+      <span class="d-none" id="sale-id"><?php echo $saleId ?></span>
       <div class="row">
         <div class="col-12 col-xl-9 h-80">
           <div class="card" style="height: 92vh;">

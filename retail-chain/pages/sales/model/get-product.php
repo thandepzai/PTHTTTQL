@@ -1,6 +1,19 @@
 <?php
 include('../../../database/dbcon.php');
-$s = "SELECT * FROM `products`";
+
+$saleID = $_GET['saleId'];
+
+$query = "SELECT ManagerID FROM Sales WHERE SaleID = '$saleID';";
+$result = mysqli_query($con, $query);
+$row = mysqli_fetch_assoc($result);
+$ManagerID = $row['ManagerID'];
+
+$s = "SELECT p.ProductID, p.ProductName,p.ImageProduct, p.Price, s.ProductQuantity
+FROM Products p
+JOIN Store s ON p.ProductID = s.ProductID
+WHERE s.ManagerID = '$ManagerID';
+";
+
 $result = mysqli_query($con, $s);
 
 // Khởi tạo mảng để lưu trữ tất cả các hàng

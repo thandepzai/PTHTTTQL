@@ -1,9 +1,10 @@
 var allProduct = [];
+var saleId = document.getElementById("sale-id").innerHTML;
 // Khởi tạo đối tượng XMLHttpRequest
 var xhr = new XMLHttpRequest();
 
 // Xác định phương thức và URL để gửi yêu cầu GET
-xhr.open("GET", "./model/get-product.php");
+xhr.open("GET", "./model/get-product.php?saleId=" + saleId);
 
 // Đăng ký hàm xử lý sự kiện cho khi yêu cầu hoàn thành
 xhr.onload = function () {
@@ -16,7 +17,7 @@ xhr.onload = function () {
 xhr.send();
 
 var arr = [];
-function renderProduct(image, name, quantity, price, index) {
+function renderProduct(image, name, quantity,maxQuantity, price, index) {
   return `  
     <div class="row border-bottom pt-3 pb-3">
       <div class="col-12 col-xl-4">
@@ -32,7 +33,7 @@ function renderProduct(image, name, quantity, price, index) {
       </div>
       <div class="col-12 col-xl-2 text-center">
         <div class="h-100 d-flex align-items-center justify-content-center">
-          <input type="number" id="quantity-${index}" class="form-control w-50 text-center fw-bold"  onchange="handleChangeQuantity(${index})" min="1" value="${quantity}">
+          <input type="number" id="quantity-${index}" class="form-control w-50 text-center fw-bold"  onchange="handleChangeQuantity(${index})" min="1" max="${maxQuantity}" value="${quantity}">
         </div>
       </div>
       <div class="col-12 col-xl-2 text-center">
@@ -63,9 +64,9 @@ function ResetRenderProduct() {
   arr.forEach((item, index) => {
     renderProductHtml =
       renderProductHtml +
-      renderProduct(item.ImageProduct, item.ProductName, 1, item.Price, index).toString();
-    totalNumber += item.quantity;
-    totalMoney += item.quantity * item.Price;
+      renderProduct(item.ImageProduct, item.ProductName, item.ProductQuantity, item.MaxProductQuantity, item.Price, index).toString();
+    totalNumber += item.ProductQuantity;
+    totalMoney += item.ProductQuantity * item.Price;
   });
   document.getElementById("listProduct").innerHTML = renderProductHtml;
   document.getElementById("total-number").innerHTML = totalNumber;
@@ -78,16 +79,17 @@ function handleChangeQuantity(i) {
     document.getElementById(`quantity-${i}`).value
   );
   document.getElementById(`total-${i}`).innerHTML =
-    arr[i].Price * quantityChange;
+  arr[i].Price * quantityChange;
 
-  totalNumber = totalNumber + quantityChange - parseInt(arr[i].quantity);
+  totalNumber = totalNumber + quantityChange - parseInt(arr[i].ProductQuantity);
   totalMoney =
     totalMoney +
     parseInt(arr[i].Price) * quantityChange -
-    parseInt(arr[i].Price) * parseInt(arr[i].quantity);
-  arr[i].quantity = quantityChange;
+    parseInt(arr[i].Price) * parseInt(arr[i].ProductQuantity);
+  arr[i].ProductQuantity = quantityChange;
   document.getElementById("total-number").innerHTML = totalNumber;
   document.getElementById("total-money").innerHTML = totalMoney;
+  
 }
 function handleChangeDelete(i) {
   arr.splice(i, 1);
@@ -140,7 +142,7 @@ inputElement.addEventListener("input", function (event) {
   listProductFind.forEach((item, index) => {
     renderProductFindHtml =
       renderProductFindHtml +
-      renderProductChose(item.ImageProduct, item.ProductName, 1, item.Price, index).toString();
+      renderProductChose(item.ImageProduct, item.ProductName, item.ProductQuantity, item.Price, index).toString();
   });
   document.getElementById("listProductChose").innerHTML = renderProductFindHtml;
 });
@@ -162,8 +164,9 @@ function handleChose(index) {
     }
   });
   if (!check) {
-    arr.push(listProductFind[index]);
-    arr[arr.length - 1].quantity = 1;
+    arr.push(Object.assign({}, listProductFind[index]));
+    arr[arr.length - 1].MaxProductQuantity = listProductFind[index].ProductQuantity;
+    arr[arr.length - 1].ProductQuantity = 1;
     ResetRenderProduct();
   }
 }
@@ -200,16 +203,14 @@ function handlePay(id) {
   if (totalNumber && amountBill) {
     let billSend = [];
     arr.forEach((item) => {
-      if(item.quantity >= 1){
-        billSend.push({
-          ProductID: item.ProductID,
-          Amount: item.quantity,
-          Cost: item.Price,
-          SaleID: id,
-          CreateDate: getTime(),
-          BillID: `Bill${amountBill + 1}`
-        })
-      }
+      billSend.push({
+        ProductID: item.ProductID,
+        Amount: item.ProductQuantity,
+        Cost: item.Price * item.ProductQuantity,
+        SaleID: id,
+        CreateDate: getTime(),
+        BillID: `Bill${amountBill + 1}`
+      })
     })
     console.log(billSend)
     $.ajax({
