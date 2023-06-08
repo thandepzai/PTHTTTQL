@@ -15,14 +15,14 @@ xhr.onload = function () {
 // Gửi yêu cầu GET đến máy chủ
 xhr.send();
 
-const arr = [];
+var arr = [];
 function renderProduct(image, name, quantity, price, index) {
   return `  
     <div class="row border-bottom pt-3 pb-3">
       <div class="col-12 col-xl-4">
         <div class="d-flex px-4 py-0">
           <div>
-            <img src="../../assets/image/image.jpg" class="avatar me-3" alt="user1">
+            <img src="../../assets/image/${image}" class="avatar me-3" alt="user1">
           </div>
           <div class="d-flex flex-column">
             <h6 class="mb-0 text-sm">${name}</h6>
@@ -96,13 +96,13 @@ function handleChangeDelete(i) {
 
 // Chose
 let renderProductFindHtml = "";
-function renderProductChose(name, quantity, price, index) {
+function renderProductChose(image, name, quantity, price, index) {
   return `  
     <div class="row border-bottom pt-3 pb-3 recommended" onclick="handleChose(${index})">
       <div class="col-12 col-xl-6">
         <div class="d-flex px-4 py-0">
           <div>
-            <img src="" class="avatar me-3" alt="user1">
+            <img src="../../assets/image/${image}" class="avatar me-3" alt="user1">
           </div>
           <div class="d-flex flex-column">
             <h6 class="mb-0 text-sm">${name}</h6>
@@ -140,7 +140,7 @@ inputElement.addEventListener("input", function (event) {
   listProductFind.forEach((item, index) => {
     renderProductFindHtml =
       renderProductFindHtml +
-      renderProductChose(item.ProductName, 1, item.Price, index).toString();
+      renderProductChose(item.ImageProduct, item.ProductName, 1, item.Price, index).toString();
   });
   document.getElementById("listProductChose").innerHTML = renderProductFindHtml;
 });
@@ -198,34 +198,32 @@ $.ajax({
 });
 function handlePay(id) {
   if (totalNumber && amountBill) {
-    let bill = {
-      SaleID: id,
-      Cost: totalMoney,
-      CreateDate: getTime(),
-      BillID: `Bill${amountBill + 1}`,
-      ManagerID: "M01",
-    };
-    let billDetail = [];
+    let billSend = [];
     arr.forEach((item) => {
-      let totalPrice = item.quantity * item.Price;
-      billDetail.push({
-        ProductID: item.ProductID,
-        BillID: "Bill232441",
-        Amount: item.quantity,
-        total_price: totalPrice,
-      });
-    });
-    console.log(bill, billDetail);
+      if(item.quantity >= 1){
+        billSend.push({
+          ProductID: item.ProductID,
+          Amount: item.quantity,
+          Cost: item.Price,
+          SaleID: id,
+          CreateDate: getTime(),
+          BillID: `Bill${amountBill + 1}`
+        })
+      }
+    })
+    console.log(billSend)
     $.ajax({
       type: "POST",
       url: "./model/post-bill.php",
       data: {
-        bill: bill,
-        billDetail: billDetail,
+        billSend: billSend,
+        SaleId: id,
       },
       success: function (data) {
-        // Xử lý dữ liệu trả về nếu có
-        console.log(data);
+        if(data === "Success"){
+          alert("Thanh toán thành công");
+          resetAll();
+        }
       },
       error: function (xhr, status, error) {
         // Xử lý lỗi nếu có
@@ -233,4 +231,9 @@ function handlePay(id) {
       },
     });
   }
+}
+
+function resetAll() {
+  arr=[];
+  ResetRenderProduct();
 }

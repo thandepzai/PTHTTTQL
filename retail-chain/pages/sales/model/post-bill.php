@@ -3,30 +3,30 @@
 include('../../../database/dbcon.php');
 
 // Lấy dữ liệu từ yêu cầu POST
-$bill = $_POST['bill'];
-$billDetail = $_POST['billDetail'];
+$billSend = $_POST['billSend'];
+$saleID = $_POST['SaleId'];
 
-// Thực hiện truy vấn để chèn dữ liệu vào cơ sở dữ liệu
-// Trong ví dụ này, mình sẽ sử dụng câu lệnh INSERT để chèn dữ liệu vào bảng tương ứng.
-// Bạn có thể tùy chỉnh câu lệnh SQL phù hợp với cấu trúc cơ sở dữ liệu của mình.
-$sql = "INSERT INTO `bill` (`SaleID`, `Cost`, `CreateDate`, `BillID`, `ManagerID`) VALUES ('$bill[SaleID]', '$bill[Cost]', '$bill[CreateDate]', '$bill[BillID]', '$bill[ManagerID]')";
-$result = mysqli_query($con, $sql);
+$query = "SELECT ManagerID FROM Sales WHERE SaleID = '$saleID';";
+$result = mysqli_query($con, $query);
+$row = mysqli_fetch_assoc($result);
+$ManagerID = $row['ManagerID'];
+
+$valueEnd = '';
+foreach ($billSend as $value) {
+  $code = "('$value[SaleID]', '$value[ProductID]', '$value[Amount]', '$value[Cost]', '$value[CreateDate]', '$value[BillID]', '$ManagerID')";
+  if ($valueEnd === ''){
+    $valueEnd = $valueEnd . $code;
+  } else {
+    $phay = ', ';
+    $valueEnd = $valueEnd . $phay . $code;
+  }
+}
+
+$sql = "INSERT INTO Bill (SaleID, ProductID, Amount, Cost, CreateDate, BillID, ManagerID) VALUES ";
+$query = $sql . $valueEnd;
+$result = mysqli_query($con, $query);
 
 if ($result) {
-  // Lấy ID của hóa đơn vừa được chèn vào cơ sở dữ liệu
-  $billID = mysqli_insert_id($con);
-
-  // Thêm các chi tiết hóa đơn vào bảng tương ứng
-  foreach ($billDetail as $item) {
-    $productID = $item['ProductID'];
-    $amount = $item['Amount'];
-    $totalPrice = $item['total_price'];
-
-    $sql = "INSERT INTO `bill_detail` (`ProductID`, `BillID`, `Amount`, `total_price`) VALUES ('$productID', '$billID', '$amount', '$totalPrice')";
-    mysqli_query($con, $sql);
-  }
-
-  // Trả về kết quả thành công
   echo "Success";
 } else {
   // Trả về thông báo lỗi nếu thất bại
