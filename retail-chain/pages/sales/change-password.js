@@ -1,4 +1,4 @@
-var managerId = document.getElementById("manager-id").innerHTML;
+var saleId = document.getElementById("sale-id").innerHTML;
 function handleChangePassword() {
   var oldPassword = document.getElementById("oldPass").value;
   var newPassword = document.getElementById("newPass").value;
@@ -11,10 +11,10 @@ function handleChangePassword() {
     ).innerHTML = `<h8 class="text-danger">Không để trống</h8>`;
   } else {
     const data = {
-      request: "changePasswordManager",
+      request: "changePasswordSale",
       oldPassword: oldPassword,
       newPassword: newPassword,
-      managerId: managerId,
+      saleId: saleId,
     };
     fetch("../member/model/change-password.php", {
       method: 'PUT',
@@ -27,13 +27,13 @@ function handleChangePassword() {
         if (response.ok) {
           return response.json();
         } else {
-          throw new Error("Error calling employee-manager.php");
+          throw new Error("Error calling employee-sale.php");
         }
       })
       .then(function (data) {
         if(data['message'] === 'Successfully') {
           alert('Đổi mật khẩu thành công');
-          window.location.href = "./manager.php";
+          window.location.href = "./home_nv.php";
         } else if(data['message'] === 'Wrong Password') {
           document.getElementById(
             "error-input"

@@ -16,13 +16,13 @@ xhr.onload = function () {
 xhr.send();
 
 const arr = [];
-function renderProduct(name, quantity, price, index) {
+function renderProduct(image, name, quantity, price, index) {
   return `  
     <div class="row border-bottom pt-3 pb-3">
       <div class="col-12 col-xl-4">
         <div class="d-flex px-4 py-0">
           <div>
-            <img src="" class="avatar me-3" alt="user1">
+            <img src="../../assets/image/image.jpg" class="avatar me-3" alt="user1">
           </div>
           <div class="d-flex flex-column">
             <h6 class="mb-0 text-sm">${name}</h6>
@@ -63,7 +63,7 @@ function ResetRenderProduct() {
   arr.forEach((item, index) => {
     renderProductHtml =
       renderProductHtml +
-      renderProduct(item.ProductName, 1, item.Price, index).toString();
+      renderProduct(item.ImageProduct, item.ProductName, 1, item.Price, index).toString();
     totalNumber += item.quantity;
     totalMoney += item.quantity * item.Price;
   });

@@ -52,6 +52,7 @@ if (isset($_SESSION['id'])) {
                   echo $saleInfo['SaleName']
                 ?>
               </h5>
+              <span class="d-none" id="sale-id"><?php echo $saleId ?></span>
               <p class="mb-0 font-weight-bold text-sm">
                 Sales
               </p>
@@ -61,7 +62,7 @@ if (isset($_SESSION['id'])) {
             <div class="nav-wrapper position-relative end-0">
               <ul class="nav nav-pills nav-fill p-1 bg-transparent" role="tablist">
                 <li class="nav-item">
-                  <a class="nav-link mb-0 px-0 py-1 active " data-bs-toggle="tab" href="javascript:;" role="tab" aria-selected="true">
+                  <a href="./home_nv.php">
                     <svg class="text-dark" width="16px" height="16px" viewBox="0 0 42 42" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                       <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
                         <g transform="translate(-2319.000000, -291.000000)" fill="#FFFFFF" fill-rule="nonzero">
@@ -76,11 +77,11 @@ if (isset($_SESSION['id'])) {
                         </g>
                       </g>
                     </svg>
-                    <span class="ms-1">Thông tin cá nhân</span>
+                    <span class="ms-1">Trang Chủ</span>
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link mb-0 px-0 py-1 " data-bs-toggle="tab" href="javascript:;" role="tab" aria-selected="false">
+                  <a href="#" >
                     <i class="bi bi-arrow-clockwise"></i>
                     <span class="ms-1">Đổi Mật Khẩu</span>
                   </a>
@@ -97,20 +98,27 @@ if (isset($_SESSION['id'])) {
         </div>
       </div>
     </div>
-    <div class="container-fluid py-4">
-      <div class="row justify-content-center">
-        <div class="col-12 col-xl-8">
-          <div class="card min-vh-50 d-flex justify-content-center">
-            <div class="w-100 d-flex justify-content-center">
-              <a type="button" class="btn bg-gradient-primary w-75 mb-0 d-flex justify-content-left" href="./shopping-card.php">
-                <h5 class="text-white font-weight-bolder mb-0 d-flex w-100">
-                  <div class="row w-100">
-                    <div class="col-1 align-items-start"><i class="bi bi-credit-card"></i></div>
-                    <div class="col-10 align-items-start">Thanh toán</div>
-                  </div>
-                </h5>
-              </a>
-            </div>
+    <div class="container mt-5">
+      <div class="row">
+        <div class="col-xl-5 col-lg-6 col-md-7 mx-auto">
+          <div class="card z-index-0">
+            <div class="text-center pt-4">
+            <h5>Đổi mật khẩu</h5>
+          </div>
+          <div class="card-body">
+            <form role="form text-left">
+              <div class="mb-3">
+                <input type="password" id="oldPass" class="form-control" placeholder="Mật khẩu cũ" aria-label="Name" aria-describedby="email-addon">
+              </div>
+              <div class="mb-3">
+                <input type="password" id="newPass" class="form-control" placeholder="Mật khẩu mới" aria-label="Email" aria-describedby="email-addon">
+              </div>
+              <div class="text-center">
+                <div id="error-input">
+                </div>
+                  <button type="button" class="btn bg-gradient-dark w-100 my-4 mb-2" onclick="handleChangePassword()">Đổi mật khẩu</button>
+              </div>
+            </form>
           </div>
         </div>
       </div>
@@ -134,6 +142,7 @@ if (isset($_SESSION['id'])) {
   <script async defer src="https://buttons.github.io/buttons.js"></script>
   <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
   <script src="../../assets/js/soft-ui-dashboard.min.js?v=1.0.3"></script>
+  <script src="./change-password.js"></script>
 </body>
 
 </html>

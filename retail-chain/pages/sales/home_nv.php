@@ -61,7 +61,7 @@ if (isset($_SESSION['id'])) {
             <div class="nav-wrapper position-relative end-0">
               <ul class="nav nav-pills nav-fill p-1 bg-transparent" role="tablist">
                 <li class="nav-item">
-                  <a class="nav-link mb-0 px-0 py-1 active " data-bs-toggle="tab" href="javascript:;" role="tab" aria-selected="true">
+                  <a href="#">
                     <svg class="text-dark" width="16px" height="16px" viewBox="0 0 42 42" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                       <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
                         <g transform="translate(-2319.000000, -291.000000)" fill="#FFFFFF" fill-rule="nonzero">
@@ -76,11 +76,11 @@ if (isset($_SESSION['id'])) {
                         </g>
                       </g>
                     </svg>
-                    <span class="ms-1">Thông tin cá nhân</span>
+                    <span class="ms-1">Trang Chủ</span>
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link mb-0 px-0 py-1 " data-bs-toggle="tab" href="javascript:;" role="tab" aria-selected="false">
+                  <a href="./change-password.php" >
                     <i class="bi bi-arrow-clockwise"></i>
                     <span class="ms-1">Đổi Mật Khẩu</span>
                   </a>

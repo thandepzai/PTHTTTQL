@@ -24,6 +24,22 @@ if ($request === 'PUT') {
         } else {
             echo json_encode(["message" => "Wrong Password"]);
         }
+    } else {
+        $saleId = $data['saleId'];
+        $query = "SELECT * FROM `sales` WHERE SaleID = '$saleId';";
+        $result = mysqli_query($con, $query);
+        $row = mysqli_fetch_array($result);
+        if($row['SalePassword'] == $oldPassword){
+            $query = "UPDATE sales SET SalePassword ='$newPassword' WHERE SaleID = '$saleId'";
+            if (mysqli_query($con, $query)) {
+                // Trả về phản hồi JSON
+                echo json_encode(["message" => "Successfully"]);
+            } else {
+                echo json_encode(["message" => "error"]);
+            }
+        } else {
+            echo json_encode(["message" => "Wrong Password"]);
+        }
     }
 }
 ?>

@@ -78,6 +78,9 @@ function renderEditProduct(index){
         <div class="card-body">
           <form role="form text-left">
             <div class="mb-3">
+              <input type="file" id="imageInput" class="form-control">
+            </div>
+            <div class="mb-3">
               <input type="text" id="name" class="form-control" placeholder="Tên sản phẩm" aria-label="Name" aria-describedby="email-addon" value='${index ? listProducts[index - 1].ProductName : '' }'>
             </div>
             <div class="mb-3">
