@@ -1,17 +1,36 @@
 <?php
+session_start ();
 include('../../../database/dbcon.php');
-$s = "SELECT * FROM `sales`";
-$result = mysqli_query($con, $s);
+$request = $_SERVER["REQUEST_METHOD"];
+if ($request === "POST") {
+  $data = json_decode(file_get_contents("php://input"), true);
+  $user = $data["email"];
+  $pass = $data["password"];
+  $adminSelect = "SELECT * FROM `admin` 
+  where AdminLogInName = '$user' && AdminLogInName = '$pass'";
+  $managerSelect = "SELECT * FROM `manager` 
+  WHERE ManagerLogInName = '$user' && ManagerPassword = '$pass'";
+  $salesSelect = "SELECT * FROM `sales` 
+  where SaleEmail = '$user' && SalePassword = '$pass'";
 
-// Khởi tạo mảng để lưu trữ tất cả các hàng
-$data = array();
+  $result = mysqli_query($con, $adminSelect);
+  $admin = mysqli_fetch_assoc($result);
 
-// Duyệt qua từng hàng và thêm chúng vào mảng $data
-while ($row = mysqli_fetch_array($result)) {
-    $data[] = $row;
+  $result = mysqli_query($con, $managerSelect);
+  $manage = mysqli_fetch_assoc($result);
+
+  $result = mysqli_query($con, $salesSelect);
+  $sales = mysqli_fetch_assoc($result);
+
+  if(!empty($admin)) {
+    echo json_encode(["message" => "admin", "id" => $admin['AdminID']]);
+  } elseif(!empty($manage)) {
+    echo json_encode(["message" => "manage", "id" => $manage['ManagerID']]);
+  } elseif(!empty($sales)) {
+    echo json_encode(["message" => "sale", "id" => $sales['SaleID']]);
+  } else {
+    echo json_encode(["message" => "Tài khoản hoặc mật khẩu không chính xác"]);
+  }
 }
-
-// Trả về kết quả bằng cách sử dụng 'echo'
-echo json_encode($data);
 ?>
 

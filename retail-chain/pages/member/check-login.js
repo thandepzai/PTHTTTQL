@@ -1,21 +1,5 @@
-var listAccount = [];
-// Khởi tạo đối tượng XMLHttpRequest
-var xhr = new XMLHttpRequest();
-
-// Xác định phương thức và URL để gửi yêu cầu GET
-xhr.open("GET", "./model/get-account.php");
-
-// Đăng ký hàm xử lý sự kiện cho khi yêu cầu hoàn thành
-xhr.onload = function () {
-  if (this.status === 200) {
-    // Xử lý dữ liệu nhận được từ phía máy chủ
-    listAccount = JSON.parse(this.responseText);
-  }
-};
-
-// Gửi yêu cầu GET đến máy chủ
-xhr.send();
-var email='', password='';
+var email = "",
+  password = "";
 function checkValidatedEmail(input) {
   email = input.value;
   var errorMessage = document.getElementById("email-error");
@@ -23,14 +7,8 @@ function checkValidatedEmail(input) {
     input.style.borderColor = "red";
     errorMessage.innerText = "Không để trống";
   } else {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (emailRegex.test(email)) {
-      input.style.borderColor = "#d2d6da";
-      errorMessage.innerText = "";
-    } else {
-      input.style.borderColor = "red";
-      errorMessage.innerText = "Email không hợp lệ";
-    }
+    input.style.borderColor = "#d2d6da";
+    errorMessage.innerText = "";
   }
 }
 
@@ -50,41 +28,74 @@ function checkValidatedPassword(input) {
 }
 
 function checkLogin() {
-  if(!email.length) {
+  if (!email.length) {
     document.querySelector('input[name="email"]').style.borderColor = "red";
-    document.getElementById("email-error").innerText = "Không để trống";   
+    document.getElementById("email-error").innerText = "Không để trống";
   } else if (!password.length) {
     document.querySelector('input[name="password"]').style.borderColor = "red";
     document.getElementById("password-error").innerText = "Không để trống";
   } else {
-    if(listAccount.length){
-      var checkEmail = false;
-      listAccount.forEach((e) => {
-        if(e.SaleEmail === email){
-          if (e.SalePassword === password){
-            document.getElementById("account-error").innerText = "";
-
-            $.ajax({
-              url: './session_start.php',
-              type: 'POST',
-              data: {id: e.SaleID},
-              success: function(response) {
-                console.log(response);
-              },
-              error: function(xhr, status, error) {
-                console.log(xhr.responseText);
-              }
-            });            
-            window.location.href = "../sales/home_nv.php";
-          } else {
-            document.getElementById("account-error").innerText = "Mật khẩu không chính xác";
-          }
-          checkEmail = true
+    const data = {
+      email: email,
+      password: password
+    };
+    fetch("./model/get-account.php", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+      .then(function (response) {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error("Error calling employee-manager.php");
         }
       })
-      if(!checkEmail) {
-        document.getElementById("account-error").innerText = "Email không tồn tại";
-      }
-    }
+      .then(function (data) {
+        if(data['message'] === 'admin') {
+          $.ajax({
+            url: './session_start.php',
+            type: 'POST',
+            data: {id: data['id']},
+            success: function(response) {
+              window.location.href = "../admin/home_nv.php";
+            },
+            error: function(xhr, status, error) {
+              console.log(xhr.responseText);
+            }
+          });   
+        } else if(data['message'] === 'manage') {
+          $.ajax({
+            url: './session_start.php',
+            type: 'POST',
+            data: {id: data['id']},
+            success: function(response) {
+              window.location.href = "../manager/manager.php";
+            },
+            error: function(xhr, status, error) {
+              console.log(xhr.responseText);
+            }
+          }); 
+        } else if(data['message'] === 'sale') {
+          $.ajax({
+            url: './session_start.php',
+            type: 'POST',
+            data: {id: data['id']},
+            success: function(response) {
+              window.location.href = "../sales/home_nv.php";
+            },
+            error: function(xhr, status, error) {
+              console.log(xhr.responseText);
+            }
+          }); 
+        } else {
+          document.getElementById("account-error").innerText = "Tài khoản hoặc mật khẩu không chính xác";
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
   }
 }

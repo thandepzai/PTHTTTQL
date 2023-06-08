@@ -6,6 +6,10 @@ if (isset($_SESSION['id'])) {
   $query = "SELECT * FROM `sales` WHERE `SaleID` = '$saleId'";
   $result = mysqli_query($con, $query);
   $saleInfo = mysqli_fetch_assoc($result);  
+  if(empty($saleInfo)) {
+    header("Location: ../member/login.php");
+    exit();
+  }
 ?>
 <!DOCTYPE html>
 <html lang="en">
