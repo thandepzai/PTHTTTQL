@@ -26,7 +26,7 @@ if ($request === "DELETE") {
     $salary = $data["salary"];
     $hour = $data["hour"];
     $password = $data["password"];
-    $managerId = 'M01';
+    $managerId = $data["managerId"];
     // Thực hiện xử lý hoặc cập nhật dữ liệu
     $query = "UPDATE sales
     SET SaleName = '$name', SalePassword = '$password', SalePhoneNo = '$phone', SaleEmail = '$email', HourlyWage = '$salary', HoursWorked = '$hour'
@@ -47,7 +47,7 @@ if ($request === "DELETE") {
     $salary = $data["salary"];
     $hour = $data["hour"];
     $password = $data["password"];
-    $managerId = 'M01';
+    $managerId = $data["managerId"];
     // Thực hiện xử lý hoặc lưu dữ liệu vào cơ sở dữ liệu
     $query = "SELECT saleID FROM sales WHERE saleID = (SELECT MAX(saleID) FROM sales)";
     $result = mysqli_query($con, $query);
@@ -65,7 +65,8 @@ if ($request === "DELETE") {
 else {
     $request = $_GET['request'];
     if ($request === 'getEmployees') {
-        $s = "SELECT * FROM sales WHERE ManagerID = 'M01';";
+        $managerID = $_GET['managerID'];
+        $s = "SELECT * FROM sales WHERE ManagerID = '$managerID';";
         $result = mysqli_query($con, $s);
 
         // Duyệt qua từng hàng và thêm chúng vào mảng $data

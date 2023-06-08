@@ -20,7 +20,7 @@ if (isset($_SESSION['id'])) {
   <link rel="apple-touch-icon" sizes="76x76" href="../../assets/img/apple-icon.png">
   <link rel="icon" type="image/png" href="../../assets/img/favicon.png">
   <title>
-    Soft UI Dashboard by Creative Tim
+    Thống Kê
   </title>
   <!--     Fonts and icons     -->
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
@@ -41,8 +41,11 @@ if (isset($_SESSION['id'])) {
       <i class="fas fa-times p-3 cursor-pointer text-secondary opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
       <span class="navbar-brand m-0">
         <img src="../../assets/img/favicon.png" class="navbar-brand-img h-100" alt="main_logo">
-        <span class="ms-1 font-weight-bold">Than dep zai</span>
+        <span class="ms-1 font-weight-bold"><?php
+          echo $saleInfo['ManagerName']
+        ?></span>
       </span>
+      <span class="d-none" id="manager-id"><?php echo $managerId ?></span>
     </div>
     <hr class="horizontal dark mt-0">
     <div class="collapse navbar-collapse  w-auto  h-auto" id="sidenav-collapse-main">
@@ -108,7 +111,7 @@ if (isset($_SESSION['id'])) {
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link  " href="./product-manager.php">
+          <a class="nav-link  " href="./change-password.php">
             <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
               <svg width="12px" height="12px" viewBox="0 0 46 42" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                 <title>customer-support</title>
@@ -125,11 +128,11 @@ if (isset($_SESSION['id'])) {
                 </g>
               </svg>
             </div>
-            <span class="nav-link-text ms-1">Profile</span>
+            <span class="nav-link-text ms-1">Đổi Mật Khẩu</span>
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link  " href="../pages/sign-up.html">
+          <a class="nav-link  " href="../member/logout.php">
             <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
               <svg width="12px" height="20px" viewBox="0 0 40 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                 <title>spaceship</title>
@@ -147,7 +150,7 @@ if (isset($_SESSION['id'])) {
                 </g>
               </svg>
             </div>
-            <span class="nav-link-text ms-1">Sign Up</span>
+            <span class="nav-link-text ms-1">Đăng Xuất</span>
           </a>
         </li>
       </ul>
@@ -197,93 +200,6 @@ if (isset($_SESSION['id'])) {
     gradientStroke2.addColorStop(0.2, 'rgba(72,72,176,0.0)');
     gradientStroke2.addColorStop(0, 'rgba(20,23,39,0)'); //purple colors
 
-    new Chart(ctx2, {
-      type: "line",
-      data: {
-        labels: ["Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-        datasets: [{
-            label: "Mobile apps",
-            tension: 0.4,
-            borderWidth: 0,
-            pointRadius: 0,
-            borderColor: "#cb0c9f",
-            borderWidth: 3,
-            backgroundColor: gradientStroke1,
-            fill: true,
-            data: [50, 40, 300, 220, 500, 250, 400, 230, 500],
-            maxBarThickness: 6
-
-          },
-          {
-            label: "Websites",
-            tension: 0.4,
-            borderWidth: 0,
-            pointRadius: 0,
-            borderColor: "#3A416F",
-            borderWidth: 3,
-            backgroundColor: gradientStroke2,
-            fill: true,
-            data: [30, 90, 40, 140, 290, 290, 340, 230, 400],
-            maxBarThickness: 6
-          },
-        ],
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            display: false,
-          }
-        },
-        interaction: {
-          intersect: false,
-          mode: 'index',
-        },
-        scales: {
-          y: {
-            grid: {
-              drawBorder: false,
-              display: true,
-              drawOnChartArea: true,
-              drawTicks: false,
-              borderDash: [5, 5]
-            },
-            ticks: {
-              display: true,
-              padding: 10,
-              color: '#b2b9bf',
-              font: {
-                size: 11,
-                family: "Open Sans",
-                style: 'normal',
-                lineHeight: 2
-              },
-            }
-          },
-          x: {
-            grid: {
-              drawBorder: false,
-              display: false,
-              drawOnChartArea: false,
-              drawTicks: false,
-              borderDash: [5, 5]
-            },
-            ticks: {
-              display: true,
-              color: '#b2b9bf',
-              padding: 20,
-              font: {
-                size: 11,
-                family: "Open Sans",
-                style: 'normal',
-                lineHeight: 2
-              },
-            }
-          },
-        },
-      },
-    });
   </script>
   <script>
     var win = navigator.platform.indexOf('Win') > -1;

@@ -5,7 +5,8 @@ $request = $_GET['request'];
 // Khởi tạo mảng để lưu trữ tất cả các hàng
 $data = array();
 if($request === 'revenue'){
-    $s = "SELECT * FROM `bill`";
+    $managerID = $_GET['managerID'];
+    $s = "SELECT * FROM `bill` WHERE `ManagerID` = '$managerID'";
     $result = mysqli_query($con, $s);
     
     // Duyệt qua từng hàng và thêm chúng vào mảng $data
@@ -24,54 +25,53 @@ if($request === 'revenue'){
         }
     }
     $data = $listedArray;
-} elseif( $request === 'chuoi cua hang'){
-
 } elseif( $request === 'expiredProduct'){
+  $managerID = $_GET['managerID'];
   $currentYearMonth = date('Y-m');
-  $s = "SELECT * FROM store WHERE DATE_FORMAT(ExpirationDate, '%Y-%m') = '$currentYearMonth'";
+  $s = "SELECT * FROM store WHERE DATE_FORMAT(ExpirationDate, '%Y-%m') = '$currentYearMonth' AND `ManagerID` = '$managerID'";
   $result = mysqli_query($con, $s);
 
   while ($row = mysqli_fetch_array($result)) {
       $data[] = $row;
   }
 } else if ( $request === 'sellingProduct'){
-  $s = "SELECT p.ProductName, b.amount_sum 
-  FROM products p 
-  JOIN ( 
-    SELECT ProductID, SUM(Amount) AS amount_sum 
-    FROM bill_detail 
-    GROUP BY ProductID 
-    ORDER BY amount_sum DESC 
-    LIMIT 10 
-  ) b ON p.ProductID = b.ProductID";
+  $managerID = $_GET['managerID'];
+  $s = "SELECT P.ProductName, SUM(B.Amount) AS TotalSold
+  FROM Bill AS B
+  JOIN Products AS P ON B.ProductID = P.ProductID
+  WHERE B.ManagerID = '$managerID' AND YEAR(B.CreateDate) = YEAR(CURRENT_DATE) AND MONTH(B.CreateDate) = MONTH(CURRENT_DATE)
+  GROUP BY P.ProductID
+  ORDER BY TotalSold DESC
+  LIMIT 10;";
   $result = mysqli_query($con, $s);
 
   while ($row = mysqli_fetch_array($result)) {
       $data[] = $row;
   }
 } else if ( $request === 'unSellingProduct' ) {
-  $s = "SELECT p.ProductName, b.amount_sum 
-  FROM products p 
-  JOIN ( 
-    SELECT ProductID, SUM(Amount) AS amount_sum 
-    FROM bill_detail 
-    GROUP BY ProductID 
-    ORDER BY amount_sum ASC 
-    LIMIT 10 
-  ) b ON p.ProductID = b.ProductID";
+  $managerID = $_GET['managerID'];
+  $s = "SELECT P.ProductName, SUM(B.Amount) AS TotalSold
+  FROM Bill AS B
+  JOIN Products AS P ON B.ProductID = P.ProductID
+  WHERE B.ManagerID = '$managerID' AND YEAR(B.CreateDate) = YEAR(CURRENT_DATE) AND MONTH(B.CreateDate) = MONTH(CURRENT_DATE)
+  GROUP BY P.ProductID
+  ORDER BY TotalSold ASC
+  LIMIT 10;";
   $result = mysqli_query($con, $s);
 
   while ($row = mysqli_fetch_array($result)) {
       $data[] = $row;
   }
 } else if ( $request === 'goodEmployee' ) {
-  $s = "SELECT s.SaleName, SUM(bd.total_price) AS total_price_sum
-  FROM sales s
-  JOIN bill b ON s.SaleID = b.SaleID
-  JOIN bill_detail bd ON b.BillID = bd.BillID
-  GROUP BY s.SaleName
-  ORDER BY total_price_sum DESC
-  LIMIT 10;
+  $managerID = $_GET['managerID'];
+  $s = "SELECT S.SaleID, S.SaleName, SUM(B.Cost) AS TotalRevenue
+  FROM Bill AS B
+  JOIN Sales AS S ON B.SaleID = S.SaleID
+  WHERE B.ManagerID = '$managerID' AND YEAR(B.CreateDate) = YEAR(CURRENT_DATE) AND MONTH(B.CreateDate) = MONTH(CURRENT_DATE)
+  GROUP BY S.SaleID, S.SaleName
+  ORDER BY TotalRevenue DESC
+  LIMIT 5;
+  
   ";
   $result = mysqli_query($con, $s);
 
@@ -79,12 +79,41 @@ if($request === 'revenue'){
       $data[] = $row;
   }
 } else if ( $request === 'goodTime' ) {
-  $s = "SELECT CONCAT(HOUR(CreateDate), ' giờ') AS Hour, COUNT(*) AS bill_count
-  FROM bill
+  $managerID = $_GET['managerID'];
+  $s = "SELECT HOUR(CreateDate) AS Hour, COUNT(*) AS TotalBills
+  FROM Bill
+  WHERE ManagerID = '$managerID' AND YEAR(CreateDate) = YEAR(CURRENT_DATE) AND MONTH(CreateDate) = MONTH(CURRENT_DATE)
   GROUP BY HOUR(CreateDate)
-  ORDER BY bill_count DESC
+  ORDER BY TotalBills DESC
   LIMIT 10;
   ";
+  $result = mysqli_query($con, $s);
+
+  while ($row = mysqli_fetch_array($result)) {
+      $data[] = $row;
+  }
+} else if ( $request === 'billList') {
+  $managerID = $_GET['managerID'];
+  $s = "SELECT BillID, SUM(Cost) AS TotalCost FROM Bill WHERE DATE(CreateDate) = CURDATE() AND `ManagerID` = '$managerID' GROUP BY BillID;";
+  $result = mysqli_query($con, $s);
+
+  while ($row = mysqli_fetch_array($result)) {
+      $data[] = $row;
+  }
+} else if ( $request === 'totalCount' ) {
+  $managerID = $_GET['managerID'];
+  $s = "SELECT SUM(Cost) AS TotalRevenue
+  FROM Bill
+  WHERE ManagerID = '$managerID' AND DATE(CreateDate) = CURDATE();
+  ";
+  $result = mysqli_query($con, $s);
+
+  while ($row = mysqli_fetch_array($result)) {
+      $data[] = $row;
+  }
+} else if ( $request === 'billList') {
+  $managerID = $_GET['managerID'];
+  $s = "SELECT BillID, SUM(Cost) AS TotalCost FROM Bill WHERE DATE(CreateDate) = CURDATE() AND `ManagerID` = '$managerID' GROUP BY BillID;";
   $result = mysqli_query($con, $s);
 
   while ($row = mysqli_fetch_array($result)) {

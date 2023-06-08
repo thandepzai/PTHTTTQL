@@ -20,7 +20,7 @@ if (isset($_SESSION['id'])) {
   <link rel="apple-touch-icon" sizes="76x76" href="../../assets/img/apple-icon.png">
   <link rel="icon" type="image/png" href="../../assets/img/favicon.png">
   <title>
-    Quản Lý Sản Phẩm
+    Đổi Mật Khẩu
   </title>
   <!--     Fonts and icons     -->
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
@@ -91,8 +91,8 @@ if (isset($_SESSION['id'])) {
             <span class="nav-link-text ms-1">Quản Lý Nhân Viên</span>
           </a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link  active">
+        <li class="nav-item" >
+          <a class="nav-link" href="./product-manager.php">
             <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
               <svg width="12px" height="12px" viewBox="0 0 43 36" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                 <title>credit-card</title>
@@ -112,7 +112,7 @@ if (isset($_SESSION['id'])) {
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link  " href="./change-password.php">
+          <a class="nav-link  active">
             <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
               <svg width="12px" height="12px" viewBox="0 0 46 42" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                 <title>customer-support</title>
@@ -151,20 +151,38 @@ if (isset($_SESSION['id'])) {
                 </g>
               </svg>
             </div>
-            <span class="nav-link-text ms-1">Đăng Xuất </span>
+            <span class="nav-link-text ms-1">Đăng Xuất</span>
           </a>
         </li>
       </ul>
     </div>
   </aside>
   <main class="main-content position-relative max-height-vh-100 h-100 mt-1 border-radius-lg ps--active-y">
-    <div class="container-fluid pl-4 pr-4 pb-4 pt-3">
-      <div id="render-button-type">
-      </div>
-      <div class="row" id="render-table">
+    <div class="container mt-5">
+      <div class="row">
+        <div class="col-xl-5 col-lg-6 col-md-7 mx-auto">
+          <div class="card z-index-0">
+            <div class="text-center pt-4">
+            <h5>Đổi mật khẩu</h5>
+          </div>
+          <div class="card-body">
+            <form role="form text-left">
+              <div class="mb-3">
+                <input type="password" id="oldPass" class="form-control" placeholder="Mật khẩu cũ" aria-label="Name" aria-describedby="email-addon">
+              </div>
+              <div class="mb-3">
+                <input type="password" id="newPass" class="form-control" placeholder="Mật khẩu mới" aria-label="Email" aria-describedby="email-addon">
+              </div>
+              <div class="text-center">
+                <div id="error-input">
+                </div>
+                  <button type="button" class="btn bg-gradient-dark w-100 my-4 mb-2" onclick="handleChangePassword()">Đổi mật khẩu</button>
+              </div>
+            </form>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="container" id="render-edit-product">
     </div>
   </main>
   </div>
@@ -174,7 +192,7 @@ if (isset($_SESSION['id'])) {
   <!-- Github buttons -->
   <script async defer src="https://buttons.github.io/buttons.js"></script>
   <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
-  <script src="product-manager.js"></script>
+  <script src="change-password.js"></script>
 </body>
 
 </html>

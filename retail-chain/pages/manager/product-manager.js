@@ -27,7 +27,9 @@ function renderTable(data, page, numberOfPages) {
                 <tr>
                 <td>
                   <div class="w-100 d-flex justify-content-center">
-                    <img src="../../assets/img/favicon.png" class="navbar-brand-img h-100 w-50" alt="main_logo">
+                    <div class="image-container">
+                      <img src="../../assets/image/${item.ImageProduct}" class="image-manager">
+                    </div>
                   </div>
                 </td>
                 <td>
@@ -76,9 +78,6 @@ function renderEditProduct(index){
         <div class="card-body">
           <form role="form text-left">
             <div class="mb-3">
-              <input type="file" name="image" id="image" class="form-control" required="">
-            </div>
-            <div class="mb-3">
               <input type="text" id="name" class="form-control" placeholder="Tên sản phẩm" aria-label="Name" aria-describedby="email-addon" value='${index ? listProducts[index - 1].ProductName : '' }'>
             </div>
             <div class="mb-3">
@@ -99,8 +98,8 @@ function renderEditProduct(index){
               ${!index ? '<button type="button" class="btn bg-gradient-dark w-100 my-4 mb-2" onclick="handleAddProduct()">Thêm sản phẩm</button>': 
               `
                 <div class="d-flex justify-content-around">
-                  <button type="button" class="btn bg-gradient-dark w-40 my-4 mb-2" onclick="handleEditProduct(${listProducts[index - 1].SaleID})">Cập nhật</button>
-                  <button type="button" class="btn bg-gradient-danger w-40 my-4 mb-2" onclick="handleDeleteProduct(${listProducts[index - 1].SaleID})">Xóa</button>
+                  <button type="button" class="btn bg-gradient-dark w-40 my-4 mb-2" onclick="handleEditProduct('${listProducts[index - 1].ProductID}')">Cập nhật</button>
+                  <button type="button" class="btn bg-gradient-danger w-40 my-4 mb-2" onclick="handleDeleteProduct('${listProducts[index - 1].ProductID}')">Xóa</button>
                 </div>
               `
               }
@@ -159,6 +158,7 @@ function renderNumberOfPages(page, numberOfPages) {
 }
 
 function renderEditProductView(index) {
+  index = (page-1)*10 + index;
   var render = renderEditProduct(index).toString();
   document.getElementById("render-edit-product").innerHTML = render;
 }
@@ -172,7 +172,7 @@ function renderButtonTypeView(type) {
 }
 
 function handleProduct() {
-  fetch("./model/Product-manager.php?request=getProducts")
+  fetch("./model/product-manager.php?request=getProducts&&managerID=" + managerId)
     .then(function (response) {
       if (response.ok) {
         return response.json();
@@ -190,9 +190,10 @@ function handleProduct() {
     });
 }
 handleProduct();
+let page = 0;
 function handleChangePage(newPage) {
-  let page = newPage;
-  let numberOfPages = (listProducts.length/10) + (listProducts.length%10 ? 1 : 0);
+  page = newPage;
+  let numberOfPages = (listProducts.length/10);
   let dataPage = 0;
   if (page === numberOfPages) {
     dataPage = listProducts.slice((page - 1)*10, listProducts.length)
@@ -223,91 +224,85 @@ function handleAddProduct() {
   var quantity = document.getElementById('quantity').value;
   var expiry = document.getElementById('expiry').value;
   var outputPrice = document.getElementById('outputPrice').value;
-  var image = document.getElementById('image').files[0];
-  
+  var image = document.getElementById('imageInput').files[0];
+
   if (name.trim().length === 0 || price.trim().length === 0 || quantity.trim().length === 0 
       || expiry.trim().length === 0 || outputPrice.trim().length === 0) {
     document.getElementById("error-input").innerHTML = `<h8 class="text-danger">Không để trống</h8>`;
   } else {
     var formData = new FormData();
+    formData.append('image', image);
+    formData.append('request', 'addProduct');
     formData.append('name', name);
     formData.append('price', price);
     formData.append('quantity', quantity);
     formData.append('expiry', expiry);
     formData.append('outputPrice', outputPrice);
-    formData.append('managerID', managerId);
-    formData.append('image', image);
+    formData.append('managerId', managerId);
 
     fetch("./model/product-manager.php", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
+      body: formData
     })
-      .then(function (response) {
-        if (response.ok) {
-          return response.json();
-        } else {
-          throw new Error("Error calling Product-manager.php");
-        }
-      })
-      .then(function (data) {
-        console.log(data);
-        comeBack();
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+    .then(function(response) {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error("Error calling Product-manager.php");
+      }
+    })
+    .then(function(data) {
+      console.log(data);
+      comeBack();
+    })
+    .catch(function(error) {
+      console.log(error);
+    });
   }
 }
 
-function handleEditProduct(saleID){
-  const name = document.getElementById("name").value;
-  const email = document.getElementById("email").value;
-  const phone = document.getElementById("phone").value;
-  const salary = document.getElementById("salary").value;
-  const hour = document.getElementById("hour").value;
-  const password = document.getElementById("password").value;
-  
-  if (name.trim().length === 0 || email.trim().length === 0 || password.trim().length === 0 
-      || phone.trim().length === 0 || salary.trim().length === 0) {
+
+function handleEditProduct(ProductID){
+  var name = document.getElementById('name').value;
+  var price = document.getElementById('inputPrice').value;
+  var quantity = document.getElementById('quantity').value;
+  var expiry = document.getElementById('expiry').value;
+  var outputPrice = document.getElementById('outputPrice').value;
+  if (name.trim().length === 0 || price.trim().length === 0 || quantity.trim().length === 0 
+      || expiry.trim().length === 0 || outputPrice.trim().length === 0) {
     document.getElementById("error-input").innerHTML = `<h8 class="text-danger">Không để trống</h8>`;
   } else {
-    const data = {
-      request: "editProduct",
-      saleID: saleID,
-      name: name,
-      email: email,
-      phone: phone,
-      salary: salary,
-      hour: hour,
-      password: password
-    };
-    fetch("./model/Product-manager.php", {
-      method: 'PUT',
-      headers: {
-          'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data),
+    var formData = new FormData();
+    formData.append('request', 'editProduct');
+    formData.append('name', name);
+    formData.append('price', price);
+    formData.append('quantity', quantity);
+    formData.append('expiry', expiry);
+    formData.append('outputPrice', outputPrice);
+    formData.append('managerId', managerId);
+    formData.append('productId', ProductID);
+
+    fetch("./model/product-manager.php", {
+      method: "PUT",
+      body: formData
     })
-      .then(function (response) {
-        if (response.ok) {
-          return response.json();
-        } else {
-          throw new Error("Error calling Product-manager.php");
-        }
-      })
-      .then(function (data) {
-        console.log(data);
-        comeBack();
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-    }
+    .then(function(response) {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error("Error calling Product-manager.php");
+      }
+    })
+    .then(function(data) {
+      console.log(data);
+      comeBack();
+    })
+    .catch(function(error) {
+      console.log(error);
+    });
+  }
 }
-function handleDeleteProduct(saleID) {
+function handleDeleteProduct(ProductID) {
   var confirmed = confirm("Bạn có chắc chắn muốn xóa nhân viên này?");
   if (confirmed) {
     // Gửi yêu cầu xóa đến máy chủ
@@ -316,7 +311,7 @@ function handleDeleteProduct(saleID) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ request: "deleteProduct", saleID: saleID }),
+      body: JSON.stringify({ request: "deleteProduct", ProductID: ProductID, ManagerID: managerId }),
     })
       .then(function (response) {
         if (response.ok) {

@@ -1,6 +1,6 @@
 // list employees
 var listEmployees = []
-
+var managerId = document.getElementById("manager-id").innerHTML;
 // view
 function renderTable(data) {
   return `
@@ -127,7 +127,7 @@ function renderButtonTypeView(type) {
 }
 
 function handleEmployee() {
-  fetch("./model/employee-manager.php?request=getEmployees")
+  fetch("./model/employee-manager.php?request=getEmployees&&managerID=" + managerId)
     .then(function (response) {
       if (response.ok) {
         return response.json();
@@ -182,7 +182,8 @@ function handleAddEmployee() {
       phone: phone,
       salary: salary,
       hour: hour,
-      password: password
+      password: password,
+      managerId: managerId
     };
 
     fetch("./model/employee-manager.php", {
@@ -229,7 +230,8 @@ function handleEditEmployee(saleID){
       phone: phone,
       salary: salary,
       hour: hour,
-      password: password
+      password: password,
+      managerId: managerId
     };
     fetch("./model/employee-manager.php", {
       method: 'PUT',
