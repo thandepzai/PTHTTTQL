@@ -60,7 +60,7 @@ function checkLogin() {
             type: 'POST',
             data: {id: data['id']},
             success: function(response) {
-              window.location.href = "../admin/home_nv.php";
+              window.location.href = "../admin/admin.php";
             },
             error: function(xhr, status, error) {
               console.log(xhr.responseText);

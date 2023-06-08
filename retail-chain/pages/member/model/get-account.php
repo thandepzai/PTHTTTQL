@@ -7,7 +7,7 @@ if ($request === "POST") {
   $user = $data["email"];
   $pass = $data["password"];
   $adminSelect = "SELECT * FROM `admin` 
-  where AdminLogInName = '$user' && AdminLogInName = '$pass'";
+  where AdminLogInName = '$user' && AdminPassword = '$pass'";
   $managerSelect = "SELECT * FROM `manager` 
   WHERE ManagerLogInName = '$user' && ManagerPassword = '$pass'";
   $salesSelect = "SELECT * FROM `sales` 
