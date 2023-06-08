@@ -62,13 +62,13 @@ function renderEditManager(index){
               <input type="text" id="name" class="form-control" placeholder="Họ và Tên" aria-label="Name" aria-describedby="email-addon" value='${index ? listManager[index - 1].ManagerName : '' }'>
             </div>
             <div class="mb-3">
-              <input type="text" id="username" class="form-control" placeholder="Tài Khoản" aria-label="Name" aria-describedby="email-addon" value='${index ? listManager[index - 1].ManagerName : '' }'>
+              <input type="text" id="username" class="form-control" placeholder="Tài Khoản" aria-label="Name" aria-describedby="email-addon" value='${index ? listManager[index - 1].ManagerLogInName : '' }'>
             </div>
             <div class="mb-3">
-              <input type="text" id="location" class="form-control" placeholder="Địa Chỉ" aria-label="Name" aria-describedby="email-addon" value='${index ? listManager[index - 1].ManagerName : '' }'>
+              <input type="text" id="location" class="form-control" placeholder="Địa Chỉ" aria-label="Name" aria-describedby="email-addon" value='${index ? listManager[index - 1].ManagerLocation : '' }'>
             </div>
             <div class="mb-3">
-              <input type="text" id="password" class="form-control" placeholder="Mật Khẩu" aria-label="Name" aria-describedby="email-addon" value='${index ? listManager[index - 1].ManagerName : '' }'>
+              <input type="password" id="password" class="form-control" placeholder="Mật Khẩu" aria-label="Name" aria-describedby="email-addon" value='${index ? listManager[index - 1].ManagerPassword : '' }'>
             </div>
             <div class="text-center">
               <div id="error-input">
@@ -76,8 +76,8 @@ function renderEditManager(index){
               ${!index ? '<button type="button" class="btn bg-gradient-dark w-100 my-4 mb-2" onclick="handleAddManager()">Thêm quản lý</button>': 
               `
                 <div class="d-flex justify-content-around">
-                  <button type="button" class="btn bg-gradient-dark w-40 my-4 mb-2" onclick="handleEditManager(${listManager[index - 1].ManagerID})">Cập nhật</button>
-                  <button type="button" class="btn bg-gradient-danger w-40 my-4 mb-2" onclick="handleDeleteManager(${listManager[index - 1].ManagerID})">Xóa</button>
+                  <button type="button" class="btn bg-gradient-dark w-40 my-4 mb-2" onclick="handleEditManager('${listManager[index - 1].ManagerID}')">Cập nhật</button>
+                  <button type="button" class="btn bg-gradient-danger w-40 my-4 mb-2" onclick="handleDeleteManager('${listManager[index - 1].ManagerID}')">Xóa</button>
                 </div>
               `
               }
@@ -96,7 +96,7 @@ function renderButtonType(type) {
     `
   }else {
     return `
-      <button type="button" class="btn btn-sm mb-0 bg-gradient-light text-dark text-lg mb-3" onclick="addManager()">Thêm nhân viên</button>
+      <button type="button" class="btn btn-sm mb-0 bg-gradient-light text-dark text-lg mb-3" onclick="addManager()">Thêm quản lý</button>
     `
   }
 }
@@ -191,26 +191,21 @@ function handleAddManager() {
 
 function handleEditManager(saleID){
   const name = document.getElementById("name").value;
-  const email = document.getElementById("email").value;
-  const phone = document.getElementById("phone").value;
-  const salary = document.getElementById("salary").value;
-  const hour = document.getElementById("hour").value;
+  const userName = document.getElementById("username").value;
+  const location = document.getElementById("location").value;
   const password = document.getElementById("password").value;
   
-  if (name.trim().length === 0 || email.trim().length === 0 || password.trim().length === 0 
-      || phone.trim().length === 0 || salary.trim().length === 0) {
+  if (name.trim().length === 0 || userName.trim().length === 0 || location.trim().length === 0 
+      || password.trim().length === 0) {
     document.getElementById("error-input").innerHTML = `<h8 class="text-danger">Không để trống</h8>`;
   } else {
     const data = {
-      request: "editManager",
-      saleID: saleID,
-      name: name,
-      email: email,
-      phone: phone,
-      salary: salary,
-      hour: hour,
-      password: password,
-      managerId: managerId
+      request: "createManager",
+      ManagerName: name,
+      ManagerPassword: password,
+      ManagerLogInName: userName,
+      ManagerLocation: location,
+      ManagerID: saleID
     };
     fetch("./model/check-manager-model.php", {
       method: 'PUT',
@@ -235,8 +230,8 @@ function handleEditManager(saleID){
       });
     }
 }
-function handleDeleteManager(saleID) {
-  var confirmed = confirm("Bạn có chắc chắn muốn xóa nhân viên này?");
+function handleDeleteManager(manageId) {
+  var confirmed = confirm("Bạn có chắc chắn muốn xóa quản lý này?");
   if (confirmed) {
     // Gửi yêu cầu xóa đến máy chủ
     fetch("./model/check-manager-model.php", {
@@ -244,7 +239,7 @@ function handleDeleteManager(saleID) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ request: "deleteManager", saleID: saleID }),
+      body: JSON.stringify({ request: "deleteManager", ManagerID: manageId }),
     })
       .then(function (response) {
         if (response.ok) {
