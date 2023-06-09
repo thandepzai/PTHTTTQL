@@ -111,14 +111,6 @@ if($request === 'revenue'){
   while ($row = mysqli_fetch_array($result)) {
       $data[] = $row;
   }
-} else if ( $request === 'billList') {
-  $managerID = $_GET['managerID'];
-  $s = "SELECT BillID, SUM(Cost) AS TotalCost FROM Bill WHERE DATE(CreateDate) = CURDATE() AND `ManagerID` = '$managerID' GROUP BY BillID;";
-  $result = mysqli_query($con, $s);
-
-  while ($row = mysqli_fetch_array($result)) {
-      $data[] = $row;
-  }
 }
 
 // Trả về kết quả bằng cách sử dụng 'echo'
